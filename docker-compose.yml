@@ -1,0 +1,30 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: manuel_db
+      MYSQL_USER: manuel
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build:
+      context: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: mysql://manuel:password@db:3306/manuel_db
+    depends_on:
+      - db
+    volumes:
+      - .:/app              # Mount local source code for hot reload
+      - /app/node_modules   # Keep container's node_modules separate
+    command: ["/bin/sh", "-c", "npm install && npm run dev"] # Auto-install deps before dev server
+
+volumes:
+  mysql_data:

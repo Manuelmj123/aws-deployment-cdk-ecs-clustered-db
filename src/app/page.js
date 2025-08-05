@@ -1,103 +1,140 @@
-import Image from "next/image";
+"use client";
+
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import Cookies from "js-cookie";
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const router = useRouter();
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [hasSession, setHasSession] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const title = "Deploy Your App with Projen";
+
+  useEffect(() => {
+    const sessionCookie = Cookies.get("session");
+    setHasSession(!!sessionCookie);
+  }, []);
+
+  const handleMouseMove = (e) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleButtonClick = () => {
+    router.push(hasSession ? "/dashboard" : "/login");
+  };
+
+  const handleSignUpClick = () => {
+    router.push("/signup");
+  };
+
+  return (
+    <div
+      onMouseMove={handleMouseMove}
+      className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white p-6"
+    >
+      {/* HERO TITLE */}
+      <motion.h1
+        className="text-5xl md:text-6xl font-extrabold flex flex-wrap justify-center mb-6 select-none"
+        initial={{ opacity: 0, y: -40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+      >
+        {title.split("").map((char, i) => (
+          <motion.span
+            key={i}
+            className="inline-block cursor-pointer"
+            onMouseEnter={() => {
+              setHoveredIndex(i);
+              setTimeout(() => setHoveredIndex(null), 800);
+            }}
+            animate={
+              hoveredIndex === i
+                ? {
+                    x:
+                      (Math.random() - 0.5) * 150 +
+                      (mousePos.x / window.innerWidth - 0.5) * 300,
+                    y:
+                      (Math.random() - 0.5) * 150 +
+                      (mousePos.y / window.innerHeight - 0.5) * 300,
+                    rotate: Math.random() * 360,
+                    opacity: 0.4,
+                  }
+                : { x: 0, y: 0, rotate: 0, opacity: 1 }
+            }
+            transition={{ duration: 0.5, ease: "easeOut" }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            {char === " " ? "\u00A0" : char}
+          </motion.span>
+        ))}
+      </motion.h1>
+
+      {/* SUBTITLE */}
+      <motion.p
+        className="text-lg md:text-xl text-gray-300 mb-6 text-center max-w-xl"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8, duration: 1 }}
+      >
+        This is a <span className="font-semibold text-green-400">template project</span> built with cutting-edge tools to help you deploy quickly and efficiently.
+      </motion.p>
+
+      {/* TECHNOLOGIES */}
+      <motion.div
+        className="flex flex-wrap justify-center gap-3 mb-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 1 }}
+      >
+        {[
+          "Next.js 15",
+          "TailwindCSS",
+          "ShadCN UI",
+          "Framer Motion",
+          "MySQL",
+          "Prisma",
+          "Docker",
+          "Projen"
+        ].map((tech, idx) => (
+          <motion.span
+            key={idx}
+            className="px-4 py-2 bg-gray-800 rounded-full text-sm shadow-lg hover:shadow-green-500/50 transition-all duration-300 cursor-default"
+            whileHover={{ scale: 1.1, rotate: 3 }}
           >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+            {tech}
+          </motion.span>
+        ))}
+      </motion.div>
+
+      {/* BUTTONS */}
+      <motion.div
+        className="flex gap-4"
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 1.5, duration: 0.5 }}
+      >
+        <Button
+          type="button"
+          onClick={handleButtonClick}
+          size="lg"
+          className="px-8 py-6 text-lg font-semibold bg-green-500 hover:bg-green-600 transition-all duration-300 shadow-lg hover:shadow-green-500/50"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          {hasSession ? "Go to Dashboard" : "Sign In"}
+        </Button>
+
+        <Button
+          type="button"
+          onClick={handleSignUpClick}
+          size="lg"
+          variant="outline"
+          className="px-8 py-6 text-lg font-semibold border-green-500 text-green-400 hover:bg-green-500 hover:text-white transition-all duration-300 shadow-lg hover:shadow-green-500/50"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          Sign Up
+        </Button>
+      </motion.div>
     </div>
   );
 }
