@@ -1,12 +1,33 @@
-const { web } = require("projen");
-const project = new web.NextJsProject({
-  defaultReleaseBranch: "main",
-  name: "manueldeploymentproject",
+const { NextJsProject } = require('projen');
 
-  // deps: [],                /* Runtime dependencies of this module. */
-  // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
-  // devDeps: [],             /* Build dependencies for this module. */
-  // packageName: undefined,  /* The "name" in package.json. */
-  // tailwind: true,          /* Setup Tailwind CSS as a PostCSS plugin. */
+const project = new NextJsProject({
+  defaultReleaseBranch: 'main',
+  name: 'manueldeploymentproject',
+
+  deps: [
+    '@prisma/client',
+    'bcryptjs',
+    'next-auth',
+    'js-cookie',
+    'framer-motion',
+    'sonner',
+  ],
+  devDeps: ['prisma'],
+
+  typescript: false,
 });
+
+// Keep your existing Docker files in source control
+project.gitignore.removePatterns('Dockerfile');
+project.gitignore.removePatterns('docker-compose.yml');
+
+// Add a helper task to build with Docker
+project.addTask('docker-build', {
+  exec: 'docker compose build',
+});
+
+project.addTask('docker-up', {
+  exec: 'docker compose up',
+});
+
 project.synth();

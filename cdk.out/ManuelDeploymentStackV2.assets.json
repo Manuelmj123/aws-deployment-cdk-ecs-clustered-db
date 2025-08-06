@@ -1,0 +1,21 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "5e2e882c7fceea3e8a3ca791e6bdffe76faf2d962a74fdd714ca613811d37a9a": {
+      "displayName": "ManuelDeploymentStackV2 Template",
+      "source": {
+        "path": "ManuelDeploymentStackV2.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "844146836906-us-east-1-36e40486": {
+          "bucketName": "cdk-hnb659fds-assets-844146836906-us-east-1",
+          "objectKey": "5e2e882c7fceea3e8a3ca791e6bdffe76faf2d962a74fdd714ca613811d37a9a.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::844146836906:role/cdk-hnb659fds-file-publishing-role-844146836906-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

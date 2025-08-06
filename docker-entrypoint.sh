@@ -1,21 +1,26 @@
 #!/bin/bash
 set -e
 
-echo "⏳ Waiting for database to be ready..."
-until nc -z db 3306; do
-  sleep 1
+# Extract DB host from DATABASE_URL (mysql://user:pass@host:3306/dbname)
+DB_HOST=$(echo "$DATABASE_URL" | sed -E 's/.*@([^:/]+).*/\1/')
+
+echo "⏳ Waiting for database at $DB_HOST:3306..."
+for i in {1..30}; do
+  if nc -z "$DB_HOST" 3306; then
+    echo "✅ Database is ready."
+    break
+  fi
+  echo "   ...retrying ($i/30)"
+  sleep 2
 done
-echo "✅ Database is ready."
 
-# Install any missing dependencies without requiring rebuild
-echo "📦 Installing missing dependencies..."
-npm install
+# Fail if DB never came up
+if ! nc -z "$DB_HOST" 3306; then
+  echo "❌ Database not reachable. Exiting."
+  exit 1
+fi
 
-# Generate Prisma client for correct platform
-echo "🚀 Generating Prisma Client..."
-npx prisma generate
-
-# Run any pending migrations
+# Run pending Prisma migrations
 echo "🚀 Running Prisma migrations..."
 npx prisma migrate deploy
 

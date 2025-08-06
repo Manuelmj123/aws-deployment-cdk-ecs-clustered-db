@@ -1,0 +1,7 @@
+{
+    "app": "node cdk-app/dist/bin/cdk-app.js",
+    "context": {
+      "@aws-cdk/core:newStyleStackSynthesis": true
+    }
+  }
+  
